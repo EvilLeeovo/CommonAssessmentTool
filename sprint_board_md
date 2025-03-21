@@ -12,14 +12,14 @@ This sprint includes two major user stories. The first focuses on refactoring th
 
 ####  Acceptance Criteria & Tasks:
 
-| Task | Description | Definition of Done |
-|------|-------------|---------------------|
-| Configure Linters & Formatters | Add `black`, `isort`, `pylint`, `mypy` | Tools work via `pyproject.toml` |
-| Create Config Files | Add `pyproject.toml`, `.pylintrc`, `.env` | Files exist and are respected |
-| Refactor ClientService | Split into `Query/Mutation/CaseService` | Each class is concentrated on one duty |
-| Refactor Router | Use new service classes in `router.py` | Old references removed |
-| Add Unit Tests | Add `test_query_service.py`, etc. | All tests pass |
-| Validate Codebase | Format with `black`, check `mypy` | No errors reported |
+| Task | Description | Definition of Done | Assigned Team Member |
+|------|-------------|---------------------|----------------------|
+| Configure Linters & Formatters | Add `black`, `isort`, `pylint`, `mypy` | Tools work via `pyproject.toml` | Junkai Zhang |
+| Create Config Files | Add `pyproject.toml`, `.pylintrc`, `.env` | Files exist and are respected | Junkai Zhang |
+| Refactor ClientService | Split into `Query/Mutation/CaseService` | Each class is concentrated on one duty | Jianchang Li |
+| Refactor Router | Use new service classes in `router.py` | Old references removed | Jianchang Li |
+| Add Unit Tests | Add `test_query_service.py`, etc. | All tests pass | Jianchang Li |
+| Validate Codebase | Format with `black`, check `mypy` | No errors reported | Jianchang Li |
 
 ---
 
@@ -29,12 +29,12 @@ This sprint includes two major user stories. The first focuses on refactoring th
 
 ####  Acceptance Criteria & Tasks:
 
-| Task | Description | Definition of Done |
-|------|-------------|---------------------|
-| Model Registry | Add model loader that supports multiple models | Models can be registered |
-| Train & Save Models | Save at least 3 `.pkl` files | All usable via same interface |
-| API: `/models/list` | Return list of available models | JSON response: `["rf", "xgb", "lr"]` |
-| API: `/models/select?name=rf` | Set the active model | Returns confirmation |
-| API: `/models/current` | Return current model name | JSON: `{ "model": "rf" }` |
-| Update `/predict` | Use selected model dynamically | Output is model-aware |
-| Add Model API Tests | Test model switching + predictions | Tests pass and validate accuracy |
+| Task | Description | Definition of Done | Assigned Team Member |
+|------|-------------|---------------------|----------------------|
+| Model Registry | Add model loader that supports multiple models | Models can be registered | Xiaotian Zhang |
+| Train & Save Models | Save at least 3 `.pkl` files | All usable via same interface | Xiaotian Zhang |
+| API: `/models/list` | Return list of available models | JSON response: `["rf", "xgb", "lr"]` | Xiaotian Zhang |
+| API: `/models/select?name=rf` | Set the active model | Returns confirmation | Xiaotian Zhang |
+| API: `/models/current` | Return current model name | JSON: `{ "model": "rf" }` | Xiaotian Zhang |
+| Update `/predict` | Use selected model dynamically | Output is model-aware | Xiaotian Zhang |
+| Add Model API Tests | Test model switching + predictions | Tests pass and validate accuracy | Xiaotian Zhang |
