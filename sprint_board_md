@@ -1,0 +1,40 @@
+---
+
+### ? Goal: Clean Code Refactoring & ML Model Switching
+
+This sprint includes two major user stories. The first focuses on refactoring the backend to follow clean code and SOLID principles. The second adds dynamic switching between multiple machine learning models for prediction.
+
+---
+
+###  Story 1: Refactor Backend for Clean Code & SOLID Principles
+
+**As a developer**, I want the backend Python code to adhere to best practices (e.g., Clean Code, Design Principles, SOLID), so that current and new developers can better read the codebase and easily make changes.
+
+####  Acceptance Criteria & Tasks:
+
+| Task | Description | Definition of Done |
+|------|-------------|---------------------|
+| Configure Linters & Formatters | Add `black`, `isort`, `pylint`, `mypy` | Tools work via `pyproject.toml` |
+| Create Config Files | Add `pyproject.toml`, `.pylintrc`, `.env` | Files exist and are respected |
+| Refactor ClientService | Split into `Query/Mutation/CaseService` | Each class is concentrated on one duty |
+| Refactor Router | Use new service classes in `router.py` | Old references removed |
+| Add Unit Tests | Add `test_query_service.py`, etc. | All tests pass |
+| Validate Codebase | Format with `black`, check `mypy` | No errors reported |
+
+---
+
+###  Story 2: Support Multiple ML Models and Switching API
+
+**As a user**, I want to switch between different Machine Learning models so I can compare output results for accuracy and precision.
+
+####  Acceptance Criteria & Tasks:
+
+| Task | Description | Definition of Done |
+|------|-------------|---------------------|
+| Model Registry | Add model loader that supports multiple models | Models can be registered |
+| Train & Save Models | Save at least 3 `.pkl` files | All usable via same interface |
+| API: `/models/list` | Return list of available models | JSON response: `["rf", "xgb", "lr"]` |
+| API: `/models/select?name=rf` | Set the active model | Returns confirmation |
+| API: `/models/current` | Return current model name | JSON: `{ "model": "rf" }` |
+| Update `/predict` | Use selected model dynamically | Output is model-aware |
+| Add Model API Tests | Test model switching + predictions | Tests pass and validate accuracy |

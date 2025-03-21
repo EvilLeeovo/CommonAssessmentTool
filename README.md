@@ -55,3 +55,24 @@ This also has an API file to interact with the front end, and logic in order to 
 
 -Create case assignment (Allow authorized users to create a new case assignment.)
 
+Setup Instructions for Development
+Step 1: Create and activate virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+Step 2: Install dependencies
+pip install -r requirements.txt
+
+Step 3: Add environment variables
+copy .env.example .env
+
+Step 4: Initialize database (optional)
+python initialize_data.py
+
+Step 5: Run the application
+uvicorn app.main:app --reload
+
+Step 6: Run linting and formatting (optional)
+black app/ tests/
+isort app/ tests/
+mypy app/
