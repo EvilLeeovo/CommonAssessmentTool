@@ -27,7 +27,22 @@ COLUMN_INTERVENTIONS = [
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(CURRENT_DIR, 'model.pkl')
 with open(MODEL_PATH, "rb") as model_file:
-    MODEL = pickle.load(model_file)
+    MODELS = pickle.load(model_file)
+
+CURRENT_MODEL = MODELS[0]  
+CURRENT_MODEL_NAME = "random_forest"
+
+
+def set_current_model(model_name: str):
+    """
+    change models
+    """
+    global CURRENT_MODEL_NAME, CURRENT_MODEL
+    if model_name not in MODELS:
+        raise ValueError(f"model '{model_name}' does not exist, available models: {list(MODELS.keys())}")
+    CURRENT_MODEL_NAME = model_name
+    CURRENT_MODEL = MODELS[model_name]
+
 
 def clean_input_data(input_data):
     """
@@ -186,8 +201,8 @@ def interpret_and_calculate(input_data):
     raw_data = clean_input_data(input_data)
     baseline_row = get_baseline_row(raw_data).reshape(1, -1)
     intervention_rows = create_matrix(raw_data)
-    baseline_prediction = MODEL.predict(baseline_row)
-    intervention_predictions = MODEL.predict(intervention_rows).reshape(-1, 1)
+    baseline_prediction = CURRENT_MODEL.predict(baseline_row)
+    intervention_predictions = CURRENT_MODEL.predict(intervention_rows).reshape(-1, 1)
     result_matrix = np.concatenate((intervention_rows, intervention_predictions), axis=1)
     result_order = result_matrix[:, -1].argsort()
     result_matrix = result_matrix[result_order]

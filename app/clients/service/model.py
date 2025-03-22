@@ -10,8 +10,8 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
 def prepare_models():
     """
     Prepare and train the Random Forest model using the dataset.
@@ -20,7 +20,7 @@ def prepare_models():
         RandomForestRegressor: Trained model for predicting success rates
     """
     # Load dataset
-    data = pd.read_csv('data_commontool.csv')
+    data = pd.read_csv('D:/program/python/5500/CommonAssessmentTool/app/clients/service/data_commontool.csv')
     # Define feature columns
     feature_columns = [
         'age',                    # Client's age
@@ -70,10 +70,25 @@ def prepare_models():
         test_size=0.2,
         random_state=42
     )
-    # Initialize and train the model
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
-    model.fit(features_train, targets_train)
-    return model
+    
+    # Train Random Forest model
+    model_rf = RandomForestRegressor(n_estimators=100, random_state=42)
+    model_rf.fit(features_train, targets_train)
+    
+    # Train Gradient Boosting model
+    model_gb = GradientBoostingRegressor(random_state=42)
+    model_gb.fit(features_train, targets_train)
+    
+    # Train Linear Regression model
+    model_lr = LinearRegression()
+    model_lr.fit(features_train, targets_train)
+    
+    models = {
+         "random_forest": model_rf,
+         "gradient_boosting": model_gb,
+         "linear_regression": model_lr
+    }
+    return models
 
 def save_model(model, filename="model.pkl"):
     """
