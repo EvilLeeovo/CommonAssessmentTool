@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.models import Client
+from sqlalchemy.orm import Session
+
 from app.clients.schema import ClientUpdate
+from app.models import Client
+
 
 class ClientMutationService:
     @staticmethod
@@ -18,7 +20,9 @@ class ClientMutationService:
             return client
         except Exception as e:
             db.rollback()
-            raise HTTPException(status_code=500, detail=f"Failed to update client: {str(e)}")
+            raise HTTPException(
+                status_code=500, detail=f"Failed to update client: {str(e)}"
+            )
 
     @staticmethod
     def delete_client(db: Session, client_id: int):
@@ -31,4 +35,6 @@ class ClientMutationService:
             db.commit()
         except Exception as e:
             db.rollback()
-            raise HTTPException(status_code=500, detail=f"Failed to delete client: {str(e)}")
+            raise HTTPException(
+                status_code=500, detail=f"Failed to delete client: {str(e)}"
+            )
