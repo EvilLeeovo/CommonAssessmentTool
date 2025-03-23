@@ -164,9 +164,9 @@ class ClientService:
         """
         query = db.query(Client).join(ClientCase)
 
-        for service_name, status in service_filters.items():
-            if status is not None:
-                filter_criteria = getattr(ClientCase, service_name) == status
+        for service_name, filter_value in service_filters.items():
+            if filter_value is not None:
+                filter_criteria = getattr(ClientCase, service_name) == filter_value
                 query = query.filter(filter_criteria)
 
         try:

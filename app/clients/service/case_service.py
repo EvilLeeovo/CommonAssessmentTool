@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.clients.schema import ServiceUpdate
@@ -68,3 +68,14 @@ class CaseAssignmentService:
             raise HTTPException(
                 status_code=500, detail=f"Failed to update case: {str(e)}"
             )
+                  
+    @staticmethod
+    def get_client_services(db: Session, client_id: int):
+        """Get all services for a specific client with case worker info"""
+        client_cases = db.query(ClientCase).filter(ClientCase.client_id == client_id).all()
+        if not client_cases:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No services found for client with id {client_id}"
+            )
+        return client_cases

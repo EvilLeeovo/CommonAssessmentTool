@@ -2,7 +2,7 @@
 Database models module defining SQLAlchemy ORM models for the Common Assessment Tool.
 Contains the Client model for storing client information in the database.
 """
-
+from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 from sqlalchemy import (
@@ -27,13 +27,13 @@ class UserRole(str, enum.Enum):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-    hashed_password = Column(String(200), nullable=False)
-    role = Column(Enum(UserRole), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(200), nullable=False)
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False)
 
-    cases = relationship("ClientCase", back_populates="user")
+    cases: Mapped[list["ClientCase"]] = relationship("ClientCase", back_populates="user")
 
 
 class Client(Base):

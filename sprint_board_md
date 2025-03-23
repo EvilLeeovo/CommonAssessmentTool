@@ -14,12 +14,13 @@ This sprint includes two major user stories. The first focuses on refactoring th
 
 | Task | Description | Definition of Done | Assigned Team Member |
 |------|-------------|---------------------|----------------------|
-| Configure Linters & Formatters | Add `black`, `isort`, `pylint`, `mypy` | Tools work via `pyproject.toml` | Junkai Zhang |
-| Create Config Files | Add `pyproject.toml`, `.pylintrc`, `.env` | Files exist and are respected | Junkai Zhang |
-| Refactor ClientService | Split into `Query/Mutation/CaseService` | Each class is concentrated on one duty | Jianchang Li |
-| Refactor Router | Use new service classes in `router.py` | Old references removed | Jianchang Li |
-| Add Unit Tests | Add `test_query_service.py`, etc. | All tests pass | Jianchang Li |
-| Validate Codebase | Format with `black`, check `mypy` | No errors reported | Jianchang Li |
+| Integrate Automated Code Validation Tools | Setup automated code checks for quality assurance. | Runs black, pylint, mypy on every PR and fails on violations. | Junkai Zhang |
+| Configure Linters & Formatters | Add formatters and linters to project setup. | Tools configured in pyproject.toml, working locally and in CI. | Junkai Zhang |
+| Create Config Files | Provide shared config files for tooling and environment. | .pylintrc, .env, pyproject.toml exist and are used by tools. | Junkai Zhang |
+| Refactor ClientService | Refactor backend into modular structure. | Code split into Query/Mutation/Service with SRP (single responsibility). | Jianchang Li |
+| Refactor Router | Update router to use new service class structure. | Old references removed, router uses services. | Jianchang Li |
+| Add Unit Tests | Add tests for backend modules and services. | Tests added, passing in CI, covering key logic. | Jianchang Li |
+| Validate Codebase | Format and lint codebase to ensure code quality. | No too much mypy errors; formatted with black. | Jianchang Li |
 
 ---
 
@@ -31,10 +32,10 @@ This sprint includes two major user stories. The first focuses on refactoring th
 
 | Task | Description | Definition of Done | Assigned Team Member |
 |------|-------------|---------------------|----------------------|
-| Model Registry | Add model loader that supports multiple models | Models can be registered | Xiaotian Zhang |
-| Train & Save Models | Save at least 3 `.pkl` files | All usable via same interface | Xiaotian Zhang |
-| API: `/models/list` | Return list of available models | JSON response: `["rf", "xgb", "lr"]` | Xiaotian Zhang |
-| API: `/models/select?name=rf` | Set the active model | Returns confirmation | Xiaotian Zhang |
-| API: `/models/current` | Return current model name | JSON: `{ "model": "rf" }` | Xiaotian Zhang |
-| Update `/predict` | Use selected model dynamically | Output is model-aware | Xiaotian Zhang |
-| Add Model API Tests | Test model switching + predictions | Tests pass and validate accuracy | Xiaotian Zhang |
+| Train and Save Multiple Models | Train different models and persist them. | Models trained, saved, and reusable. | Xiaotian Zhang |
+| Implement Multi-Model Loading and Switching Logic | Support loading and registering multiple models. | Model loader handles multiple models; registry works as expected. | Xiaotian Zhang |
+| Design Available Models List API | Create API to list all available models. | API returns model list; validated via tests. | Xiaotian Zhang |
+| Design Current Model Query API | Create API to get the current selected model. | API returns correct model info; tested and documented. | Xiaotian Zhang |
+| Design Model Switching API | Build API to switch between models. | Switching works; persisted across sessions; test added. | Xiaotian Zhang |
+| Implement Prediction API | Build prediction API using current model. | API returns prediction; tested with sample input. | Xiaotian Zhang |
+| Update Documentation for New Endpoints | Document all new model-related APIs. | README or docs updated; includes usage examples. | Xiaotian Zhang |
