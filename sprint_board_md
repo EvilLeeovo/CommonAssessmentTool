@@ -32,8 +32,8 @@ This sprint includes two major user stories. The first focuses on refactoring th
 
 | Task | Description | Definition of Done | Assigned Team Member |
 |------|-------------|---------------------|----------------------|
-| Train and Save Multiple Models | Train different models and persist them. | Models trained, saved, and reusable. | Xiaotian Zhang |
-| Implement Multi-Model Loading and Switching Logic | Support loading and registering multiple models. | Model loader handles multiple models; registry works as expected. | Xiaotian Zhang |
+| Train and Save Multiple Models | Train different models and persist them. | Models trained, saved, and reusable. | Kefan Zhou |
+| Implement Multi-Model Loading and Switching Logic | Support loading and registering multiple models. | Model loader handles multiple models; registry works as expected. | Kefan Zhou |
 | Design Available Models List API | Create API to list all available models. | API returns model list; validated via tests. | Xiaotian Zhang |
 | Design Current Model Query API | Create API to get the current selected model. | API returns correct model info; tested and documented. | Xiaotian Zhang |
 | Design Model Switching API | Build API to switch between models. | Switching works; persisted across sessions; test added. | Xiaotian Zhang |
