@@ -23,7 +23,7 @@ def prepare_models():
     """
     # Load dataset
     data = pd.read_csv(
-        "D:/program/python/5500/CommonAssessmentTool/app/clients/service/data_commontool.csv"
+        "./app/clients/service/data_commontool.csv"
     )
     # Define feature columns
     feature_columns = [

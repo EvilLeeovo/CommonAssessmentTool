@@ -26,13 +26,13 @@ COLUMN_INTERVENTIONS = [
 ]
 
 # Load model
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(CURRENT_DIR, "model.pkl")
+MODEL_PATH =  "model.pkl"
 with open(MODEL_PATH, "rb") as model_file:
     MODELS = pickle.load(model_file)
 
-CURRENT_MODEL = MODELS[0]
+CURRENT_MODEL = MODELS["random_forest"]
 CURRENT_MODEL_NAME = "random_forest"
+
 
 
 def set_current_model(model_name: str):
