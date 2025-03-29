@@ -28,10 +28,13 @@ This also has an API file to interact with the front end, and logic in order to 
 
 4. Go to SwaggerUI (http://127.0.0.1:8000/docs)
 
-4. Log in as admin (username: admin password: admin123)
+5. Log in as admin (username: admin password: admin123)
 
-5. Click on each endpoint to use
+6. Click on each endpoint to use
 -Create User (Only users in admin role can create new users. The role field needs to be either "admin" or "case_worker")
+
+7. Model Selection
+- Check usable models list, and change to the model and check.
 
 -Get clients (Display all the clients that are in the database)
 
