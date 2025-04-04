@@ -80,8 +80,12 @@ black app/ tests/
 isort app/ tests/
 mypy app/
 
+For the setting of Docker
 Step 7: Build the Docker Image
 docker build -t case-management-backend .
 
 Step 8: Run the Docker Container (Using Docker Run)
 docker run -p 8000:8000 case-management-backend
+
+Step 9: Run Using Docker Compose (Alternative way of Step 8)
+docker-compose up --build
