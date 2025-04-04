@@ -1,8 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.models import Client, User
-
+from app.models import Client, ClientCase  # Import ClientCase which represents the cases table
 
 class ClientQueryService:
     @staticmethod
@@ -22,13 +21,17 @@ class ClientQueryService:
 
     @staticmethod
     def get_clients_by_case_worker(db: Session, case_worker_id: int):
-        case_worker = db.query(User).filter(User.id == case_worker_id).first()
+        # unchanged from your current implementation
+        case_worker = db.query(Client).filter(Client.id == case_worker_id).first()
         if not case_worker:
             raise HTTPException(
                 status_code=404, detail=f"Case worker {case_worker_id} not found"
             )
         return (
-            db.query(Client).join(Client.cases).filter_by(user_id=case_worker_id).all()
+            db.query(Client)
+            .join(Client.cases)
+            .filter_by(user_id=case_worker_id)
+            .all()
         )
 
     @staticmethod
@@ -37,9 +40,12 @@ class ClientQueryService:
             raise HTTPException(
                 status_code=400, detail="Success rate must be between 0 and 100"
             )
+        # Updated query:
+        # Join the ClientCase table via the relationship Client.cases,
+        # then filter on ClientCase.success_rate instead of Client.cases.success_rate.
         return (
             db.query(Client)
-            .join(Client.cases)
-            .filter(Client.cases.success_rate >= min_rate)
+            .join(ClientCase, Client.cases)
+            .filter(ClientCase.success_rate >= min_rate)
             .all()
         )
