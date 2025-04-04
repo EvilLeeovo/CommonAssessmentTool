@@ -2,8 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.clients.schema import ClientUpdate
-from app.models import Client
-
+from app.models import Client, ClientCase  # Make sure ClientCase is defined in your models
 
 class ClientMutationService:
     @staticmethod
@@ -30,7 +29,9 @@ class ClientMutationService:
         if not client:
             raise HTTPException(status_code=404, detail=f"Client {client_id} not found")
         try:
-            db.query(Client.cases).filter_by(client_id=client_id).delete()
+            # Delete associated cases using the actual model (ClientCase)
+            db.query(ClientCase).filter(ClientCase.client_id == client_id).delete()
+            # Delete the client record
             db.delete(client)
             db.commit()
         except Exception as e:
