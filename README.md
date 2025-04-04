@@ -79,3 +79,9 @@ Step 6: Run linting and formatting (optional)
 black app/ tests/
 isort app/ tests/
 mypy app/
+
+Step 7: Build the Docker Image
+docker build -t case-management-backend .
+
+Step 8: Run the Docker Container (Using Docker Run)
+docker run -p 8000:8000 case-management-backend

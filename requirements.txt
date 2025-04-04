@@ -71,9 +71,9 @@ nbformat==5.8.0
 nest-asyncio==1.5.6
 notebook==6.5.4
 notebook_shim==0.2.2
-# numpy==1.24.2
+numpy==1.26.4
 packaging==23.2
-pandas==2.0.0
+pandas==2.0.1
 pandocfilters==1.5.0
 parso==0.8.3
 passlib==1.7.4
@@ -112,7 +112,7 @@ requests==2.31.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rsa==4.9
-scikit-learn==1.4.2
+scikit-learn==1.6.1
 scipy==1.13.0
 Send2Trash==1.8.0
 six==1.16.0
