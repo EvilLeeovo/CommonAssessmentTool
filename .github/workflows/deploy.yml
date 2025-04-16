@@ -26,6 +26,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    - name: Get AWS Account ID
+      id: get-account-id
+      run: |
+        ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        echo "ACCOUNT_ID=${ACCOUNT_ID}" >> $GITHUB_ENV
+
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
@@ -35,7 +41,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.SHA_SHORT }}
+        IMAGE_URI=${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${SHA_SHORT}
         echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
         docker build -t ${IMAGE_URI} .
         docker push ${IMAGE_URI}
@@ -74,5 +80,5 @@ jobs:
         aws ecs update-service \
           --cluster ${{ env.ECS_CLUSTER }} \
           --service ${{ env.ECS_SERVICE }} \
-          --task-definition ${{ env.TASK_DEF_ARN }} \
+          --task-definition ${TASK_DEF_ARN} \
           --force-new-deployment
