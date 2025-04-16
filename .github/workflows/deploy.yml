@@ -36,12 +36,13 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Download current ECS task definition
+      - name: Download existing task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition ${{ secrets.ECS_TASK_DEFINITION }} \
+            --task-definition CommonAssessmentTool \
             --query taskDefinition \
             --output json > task-def.json
+
 
       - name: Replace image URI in task definition
         run: |
