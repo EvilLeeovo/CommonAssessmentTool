@@ -1,90 +1,73 @@
-name: Deploy to ECS
+name: Deploy to Amazon ECS
 
 on:
   push:
-    branches:
-      - main  # or your default branch
-
-env:
-  AWS_REGION: us-west-2
-  ECR_REPOSITORY: common_assessment_tool
-  ECS_CLUSTER: your-ecs-cluster-name
-  ECS_SERVICE: your-ecs-service-name
-  TASK_DEFINITION_NAME: CommonAssessmentTool_Deployment
+    branches: [main]
 
 jobs:
   deploy:
+    name: Deploy to ECS
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: us-west-2
+      ECR_REPOSITORY: common_assessment_tool
+      ECS_CLUSTER: your-ecs-cluster-name
+      ECS_SERVICE: your-ecs-service-name
+      TASK_DEFINITION_NAME: CommonAssessmentTool_Deployment
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout source
+      uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-      - name: Log in to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push Docker image to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+    - name: Build, tag, and push Docker image to ECR
+      run: |
+        IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        docker build -t $IMAGE_URI .
+        docker push $IMAGE_URI
+        echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
-      - name: Download current task definition
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition $TASK_DEFINITION_NAME \
-            --query taskDefinition \
-            --output json > task-def.json
+    - name: Download task definition
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition $TASK_DEFINITION_NAME \
+          --query taskDefinition \
+          --output json > task-def.json
 
-      - name: Update image URI in container definitions
-        run: |
-          CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' task-def.json)
-          jq --arg IMAGE "$IMAGE_URI" '.containerDefinitions[0].image = $IMAGE' task-def.json > temp-task-def.json && mv temp-task-def.json task-def.json
+    - name: Update task definition with new image
+      run: |
+        sed -i "s|image\": \".*\"|image\": \"${IMAGE_URI}\"|" task-def.json
+        sed -i '/taskDefinitionArn/d' task-def.json
+        sed -i '/revision/d' task-def.json
+        sed -i '/status/d' task-def.json
+        sed -i '/requiresAttributes/d' task-def.json
+        sed -i '/compatibilities/d' task-def.json
+        sed -i '/registeredAt/d' task-def.json
+        sed -i '/registeredBy/d' task-def.json
 
-      - name: Strip read-only fields and save new task def
-        run: |
-          jq '{
-            family,
-            taskRoleArn,
-            executionRoleArn,
-            networkMode,
-            containerDefinitions,
-            volumes,
-            placementConstraints,
-            requiresCompatibilities,
-            cpu,
-            memory,
-            tags,
-            pidMode,
-            ipcMode,
-            proxyConfiguration,
-            inferenceAccelerators,
-            ephemeralStorage,
-            runtimePlatform
-          }' task-def.json > new-task-def.json
+    - name: Register new task definition
+      id: register-task-def
+      run: |
+        NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+          --cli-input-json file://task-def.json \
+          --query 'taskDefinition.taskDefinitionArn' \
+          --output text)
+        echo "TASK_DEF_ARN=$NEW_TASK_DEF_ARN" >> $GITHUB_ENV
 
-      - name: Register new task definition
-        id: register-task-def
-        run: |
-          TASK_DEF_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://new-task-def.json \
-            | jq -r '.taskDefinition.taskDefinitionArn')
-          echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
-
-      - name: Update ECS service with new task definition
-        run: |
-          aws ecs update-service \
-            --cluster $ECS_CLUSTER \
-            --service $ECS_SERVICE \
-            --task-definition $TASK_DEF_ARN
+    - name: Deploy updated task definition to ECS service
+      run: |
+        aws ecs update-service \
+          --cluster $ECS_CLUSTER \
+          --service $ECS_SERVICE \
+          --task-definition $TASK_DEF_ARN
