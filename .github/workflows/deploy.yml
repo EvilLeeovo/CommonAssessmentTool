@@ -39,6 +39,9 @@ jobs:
             --query taskDefinition \
             > task-def.json
 
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+
     - name: Replace image URI in task definition
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
