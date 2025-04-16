@@ -4,17 +4,16 @@ on:
   push:
     branches: [ main ]
 
+env:
+  AWS_REGION: us-west-2
+  ECR_REPOSITORY: common_assessment_tool
+  ECS_CLUSTER: CommonAssessmentTool_Cluster
+  ECS_SERVICE: CommonAssessmentTool_Service
+  TASK_DEFINITION_NAME: CommonAssessmentTool_Deployment
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    env:
-      AWS_REGION: us-west-2
-      AWS_DEFAULT_REGION: us-west-2
-      ECR_REPOSITORY: common_assessment_tool
-      TASK_DEFINITION_NAME: CommonAssessmentTool_Deployment
-      ECS_CLUSTER: your-ecs-cluster-name
-      ECS_SERVICE: your-ecs-service-name
 
     steps:
     - name: Checkout repository
@@ -36,15 +35,15 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${SHA_SHORT}
-        echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
-        docker build -t $IMAGE_URI .
-        docker push $IMAGE_URI
+        IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.SHA_SHORT }}
+        echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
+        docker build -t ${IMAGE_URI} .
+        docker push ${IMAGE_URI}
 
     - name: Get current task definition
       run: |
         aws ecs describe-task-definition \
-          --task-definition $TASK_DEFINITION_NAME \
+          --task-definition ${{ env.TASK_DEFINITION_NAME }} \
           --query taskDefinition \
           --output json > task-def.json
 
@@ -60,7 +59,7 @@ jobs:
           .registeredBy,
           .taskDefinitionStatus
         ) | 
-        (.containerDefinitions[0].image) = "${IMAGE_URI}"' task-def.json > new-task-def.json
+        (.containerDefinitions[0].image) = "'"${IMAGE_URI}"'"' task-def.json > new-task-def.json
 
     - name: Register new task definition
       run: |
@@ -68,11 +67,12 @@ jobs:
           --cli-input-json file://new-task-def.json \
           --query 'taskDefinition.taskDefinitionArn' \
           --output text)
-        echo "TASK_DEF_ARN=$NEW_TASK_DEF_ARN" >> $GITHUB_ENV
+        echo "TASK_DEF_ARN=${NEW_TASK_DEF_ARN}" >> $GITHUB_ENV
 
     - name: Update ECS service
       run: |
         aws ecs update-service \
-          --cluster $ECS_CLUSTER \
-          --service $ECS_SERVICE \
-          --task-definition $TASK_DEF_ARN
+          --cluster ${{ env.ECS_CLUSTER }} \
+          --service ${{ env.ECS_SERVICE }} \
+          --task-definition ${{ env.TASK_DEF_ARN }} \
+          --force-new-deployment
