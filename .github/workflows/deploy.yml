@@ -39,7 +39,7 @@ jobs:
       - name: Download existing task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition CommonAssessmentTool \
+            --task-definition CommonAssessmentTool_Deployment \
             --query taskDefinition \
             --output json > task-def.json
 
